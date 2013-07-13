@@ -29,8 +29,7 @@
         }
     ],
     "autoload": {
-        "psr-0": {"Drapi\\": "src/"},
-        "files": ["src/drapi-commons.php"]
+        "psr-0": {"Drapi\\": "src/"}        
     },
     "minimum-stability": "stable"
 }
