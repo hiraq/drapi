@@ -20,10 +20,10 @@ class Log
 	 * @access public
 	 * @uses Monolog\Logger logger handler
 	 * @param  string $name log channel
-	 * @param  string $path log file path
+	 * @param  \Monolog\Handler\HandlerInterface $handler log handler
 	 * @return void
 	 */
-	public function setupLogger($name,$handler) 
+	public function setupLogger($name, \Monolog\Handler\HandlerInterface $handler) 
 	{
 		if (!array_key_exists($name, $this->logger)) {
 			$this->logger[$name] = new Logger($name);			

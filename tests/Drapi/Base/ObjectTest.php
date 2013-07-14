@@ -12,9 +12,7 @@ class ObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Test Object object and parent class
-	 * 
-	 * @covers Object::__construct	 
+	 * Test Object object and parent class	 	
 	 */
 	public function testRequestObject() 
 	{
@@ -24,7 +22,7 @@ class ObjectTest extends PHPUnit_Framework_TestCase
 	/**
 	 * Test object method > log
 	 * 
-	 * @covers Object::log
+	 * @covers Drapi\Base\Object::log
 	 */
 	public function testLog()
 	{

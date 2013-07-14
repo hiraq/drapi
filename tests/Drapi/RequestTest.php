@@ -15,9 +15,9 @@ class RequestTest extends PHPUnit_Framework_TestCase
 	/**
 	 * Test Request object and parent class
 	 * 
-	 * @covers Request::__construct
-	 * @convers Request::log
-	 * @convers Object::log
+	 * @covers Drapi\Request::__construct
+	 * @convers Drapi\Request::log
+	 * @convers Drapi\Base\Object::log
 	 */
 	public function testRequestObject() 
 	{
