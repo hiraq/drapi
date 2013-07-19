@@ -4,9 +4,9 @@ namespace Drapi;
 
 use Drapi\Base\Object as Object;
 use Zend\Http\PhpEnvironment\Request as PhpRequest;
-use Zend\Uri\UriFactory as UriFactory;
+use Zend\Uri\Uri as Uri;
 
-class Request extends Object 
+class Request extends Object
 {		
 	private $method;
 	private $ip;	
@@ -15,13 +15,14 @@ class Request extends Object
 	private $requestedPath;	
 	private $requestedScheme = 'http://';
 	private $requestedUrl;
-	private $currentRequest = null;
-	private $currentUri = null;
-	private $authCallback = null;
+	protected $currentRequest = null;
+	protected $currentUri = null;
+	protected $authCallback = null;
 
 	public function __construct()
 	{
 		$this->currentRequest = new PhpRequest();
+		$this->currentUri = new Uri();
 	}
 
 	public function listen()
@@ -40,8 +41,8 @@ class Request extends Object
 	}
 
 	public function getMethod()
-	{
-
+	{				
+		return $this->currentRequest->getMethod();
 	}
 
 	public function getIp()
@@ -62,7 +63,7 @@ class Request extends Object
 	public function getParams()
 	{
 
-	}
+	}	
 
 	private function buildUri()
 	{

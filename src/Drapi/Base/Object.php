@@ -11,7 +11,7 @@ use Drapi\Base\Log as Log;
  *
  * @author Hiraq <hrxwan@gmail.com>
  */
-class Object 
+class Object
 {
 	private $log;
 
@@ -30,5 +30,5 @@ class Object
 	public function log()
 	{
 		return $this->log;
-	}
+	}	
 }
