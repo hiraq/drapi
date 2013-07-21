@@ -4,3 +4,4 @@ phpunit.xml
 logs/server
 tests/coverage
 index.php
+index-response.php
