@@ -75,6 +75,45 @@ class ResponseTest extends PHPUnit_Framework_TestCase
 		$this->__Response->send(array('test' => 'testing'));	
 	}
 
+	public function testSendFailedData()
+	{
+		$this->__PhpResponse->expects($this->any())
+							->method('setStatusCode')
+							->will($this->returnSelf());
+
+		$this->__PhpResponse->expects($this->any())
+							->method('getHeaders')
+							->will($this->returnValue($this->__Headers));
+
+		$this->__PhpResponse->expects($this->any())
+							->method('setContent')
+							->will($this->returnCallback(function($arg) {
+								if (!is_array($arg)) {
+									return \Zend\Json\Json::encode(array('status' => 'error','message' => 'Failed data response'));
+								}
+							}));
+
+		$this->__PhpResponse->expects($this->any())
+							->method('send')
+							->will($this->returnCallback(function() {
+								echo \Zend\Json\Json::encode(array('status' => 'error','message' => 'Failed data response'));								
+							}));
+
+		$this->__Headers->expects($this->any())
+						->method('addHeaders')
+						->will($this->returnCallback(function($arg) {
+							return null;
+						}));
+
+		$this->mockingResponse();		
+
+		$this->assertEquals($this->__PhpResponse,$this->__PhpResponse->setStatusCode(200));
+		$this->assertEquals($this->__Headers,$this->__PhpResponse->getHeaders());					
+
+		$this->expectOutputString(\Zend\Json\Json::encode(array('status' => 'error','message' => 'Failed data response')));
+		$this->__Response->send('testing');	
+	}
+
 	private function mockingResponse()
 	{
 		$this->__Response = new MockResponseObject();

@@ -115,7 +115,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
 		$this->__Uri->expects($this->any())
 					->method('getPath')					
-					->will($this->returnValue('/test/users?name=testing&key1=value1'));
+					->will($this->returnValue('/test/users'));
 
 		$this->__Uri->expects($this->any())
 					->method('getQueryAsArray')					
@@ -140,8 +140,12 @@ class RequestTest extends PHPUnit_Framework_TestCase
 	   	$path = $this->__Request->getUriPath();
 	   	$params = $this->__Request->getParams();
 
-	   	$this->assertEquals('/test/users?name=testing&key1=value1',$path);
+	   	$this->assertEquals('/test/users',$path);
 	   	$this->assertInternalType('array',$params);
+	   	$this->assertArrayHasKey('name',$params);
+	   	$this->assertArrayHasKey('key1',$params);
+	   	$this->assertEquals($params['name'],'testing');
+	   	$this->assertEquals($params['key1'],'value1');
 	}
 
 	/**

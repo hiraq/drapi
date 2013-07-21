@@ -9,11 +9,22 @@ class Response extends Object
 {
 	protected $response;
 
+	/**
+	 * Setup response object
+	 */
 	public function __construct()
 	{
 		$this->response = new PhpResponse();
 	}
 
+	/**
+	 * Send output data
+	 *
+	 * @access public
+	 * @param  array  $data
+	 * @param  integer $code
+	 * @return void
+	 */
 	public function send($data,$code=202)
 	{		
 		$this->response->setStatusCode($code);
@@ -25,8 +36,8 @@ class Response extends Object
 			$this->response->setContent(\Zend\Json\Json::encode($data));
 		} else {
 			$this->response->setContent(\Zend\Json\Json::encode(array(
-				'error' => 1,
-				'status' => 'failed data response')));
+				'status' => 'error',
+				'message' => 'Failed data response')));
 		}
 
 		$this->response->send();
