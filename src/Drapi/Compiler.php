@@ -6,6 +6,7 @@ use Drapi\Base\Object as Object;
 use Drapi\Request as Request;
 use Drapi\Response as Response;
 use Drapi\Router as Router;
+use Drapi\Handler as Handler;
 
 class Compiler extends Object
 {
@@ -31,10 +32,17 @@ class Compiler extends Object
 	 */
 	protected $response;
 
+	/**
+	 * Handler manager
+	 * @var Handler
+	 */
+	protected $handler;
+
 	private $uriPath;	
-	private $uriParams;
-	private $handler;
-	private $action;
+	private $uriParams;	
+	private $handlerName;
+	private $handlerAction;
+	private $action;	
 
 	/**
 	 * Setup router,request and response objects
@@ -43,11 +51,12 @@ class Compiler extends Object
 	 * @param Request  $request
 	 * @param Response $response
 	 */
-	public function __construct(Router $router, Request $request, Response $response)
+	public function __construct(Router $router, Request $request, Response $response,Handler $handler)
 	{
 		$this->router = $router;
 		$this->request = $request;
 		$this->response = $response;
+		$this->handler = $handler;
 	}
 
 	public function compile()
@@ -65,9 +74,40 @@ class Compiler extends Object
 		$this->checkRouter();
 	}
 
+	/**
+	 * Get handler manager
+	 * @return Handler
+	 */
 	public function getHandler()
 	{
 		return $this->handler;
+	}
+
+	/**
+	 * Get router manager
+	 * @return Router
+	 */
+	public function getRouter()
+	{
+		return $this->router;
+	}
+
+	/**
+	 * Get request manager
+	 * @return Request
+	 */
+	public function getRequest()
+	{
+		return $this->request;
+	}
+
+	/**
+	 * Get response manager
+	 * @return Response
+	 */
+	public function getResponse()
+	{
+		return $this->response;
 	}
 
 	private function checkRouter()
@@ -76,13 +116,13 @@ class Compiler extends Object
 		check path handler from router
 		 */
 		if (!empty($this->uriPath)) {
-			$this->handler = ucfirst(strtolower($this->router->getPathHandler($this->uriPath)));
+			$this->handlerName = ucfirst(strtolower($this->router->getPathHandler($this->uriPath)));
 		}
 
 		/*
 		if handler not defined, then manually search for handler based on path
 		 */
-		if (!$this->handler) {
+		if (!$this->handlerName) {
 			$this->manualSetupHandler();
 		}
 	}
@@ -91,56 +131,8 @@ class Compiler extends Object
 	{
 		if (strstr($this->uriPath,'/')) {
 			$exp = explode('/',$this->uriPath);
-			$this->handler = ucfirst(strtolower(current($exp)));
-			$this->action = ucfirst(strtolower(end($exp)));
+			$this->handlerName = ucfirst(strtolower(current($exp)));
+			$this->handlerAction = ucfirst(strtolower(end($exp)));
 		}
-	}
-
-	private function loadHandler()
-	{
-		if (!empty($this->handler)) {
-
-			//setup handler class name
-			$classname = 'Drapi\\Handler\\'.$this->handler;
-
-			/*
-			if handler exists then load it based on action
-			or only to get output
-			 */
-			if (class_exists($classname)) {
-
-				$handler = new $classname($this->uriPath,$this->uriParams);	
-				if (!empty($this->action)) {
-
-					$action = $this->action;
-					if (method_exists($handler,$action)) {
-						$output = $handler->$action();	
-						$code = 202;	
-					} else {
-						$output = array('status' => 'error','message' => 'Unknown action handler');
-						$code = 404;
-					}
-					
-
-				} else {
-
-					if (method_exists($handler,'getOutput')) {
-						$output = $handler->getOutput();
-						$code = 202;
-					} else {
-						$output = array('status' => 'error','message' => 'Failed data response');
-						$code = 400;
-					}
-				}
-
-				$this->response->send($output,$code);
-			} else {
-				//if handler class not exists
-				$this->response->send(array('status' => 'error','message' => 'Bad request'),400);
-			}
-		} else {
-			//unknown path and handler
-			$this->response->send(array('status' => 'error','message' => 'Unknown request'),404);
-		}
-	}
+	}	
 }
