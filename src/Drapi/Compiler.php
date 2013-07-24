@@ -110,6 +110,24 @@ class Compiler extends Object
 		return $this->response;
 	}
 
+	/**
+	 * Get handler name
+	 * @return string
+	 */
+	public function getHandlerName()
+	{
+		return $this->handlerName;
+	}
+
+	/**
+	 * Get handler action
+	 * @return string
+	 */
+	public function getHandlerAction()
+	{
+		return $this->handlerAction;
+	}
+
 	private function checkRouter()
 	{
 		/*

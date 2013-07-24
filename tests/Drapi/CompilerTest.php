@@ -33,7 +33,7 @@ class CompilerTest extends PHPUnit_Framework_TestCase
 		$this->__Router = new DrapiRouter;
 		$this->__Request = new DrapiRequest;
 		$this->__Response = new DrapiResponse;
-		$this->__Handler = new DrapiHandler;
+		$this->__Handler = new DrapiHandler('test');
 		$this->__Compiler = new MockCompilerObject(
 			$this->__Router,$this->__Request,$this->__Response,$this->__Handler);
 	}
