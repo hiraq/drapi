@@ -5,36 +5,6 @@ use Drapi\Request as DrapiRequest;
 use Drapi\Response as DrapiResponse;
 use Drapi\Base\Abstracts\Handler as DrapiBaseHandler;
 
-class FakeMainHandlerClass extends DrapiHandler
-{
-	/**
-	 * Override parent 'get' method
-	 * @param  DrapiRequest  $request
-	 * @param  DrapiResponse $response
-	 * @return null|object                 
-	 */
-	public function get(DrapiRequest $request, DrapiResponse $response)
-	{
-		$className = ucfirst(strtolower($this->name));
-		$classObj = null;
-
-		if (class_exists($className)) {
-			$classObj = new $className($request,$response);
-		}
-
-		if (!is_null($classObj) 
-			&& is_a($classObj,'Drapi\\Base\\Abstracts\\Handler')) {
-
-			if (!empty($this->action)) {
-				return $classObj->$action();
-			}
-
-		}
-
-		return $classObj;		
-	}	
-}
-
 class FakeHandlerClass extends DrapiBaseHandler
 {
 	public function getOutput()
@@ -52,26 +22,57 @@ class HandlerTest extends PHPUnit_Framework_TestCase
 {
 	private $__Request;
 	private $__Response;
-	private $__FakeMainHandler;
+	private $__Handler;
 
 	public function setUp()
 	{
 		$this->__Request = new DrapiRequest;
 		$this->__Response = new DrapiResponse;
-		$this->__FakeMainHandler = new FakeMainHandlerClass('FakeHandlerClass');
+		$this->__Handler = new DrapiHandler('FakeHandlerClass');
 	}
 
 	public function testObjects()
 	{
 		$this->assertTrue(is_a($this->__Request,'Drapi\\Request'));
 		$this->assertTrue(is_a($this->__Response,'Drapi\\Response'));
-		$this->assertTrue(is_a($this->__FakeMainHandler,'Drapi\\Handler'));
+		$this->assertTrue(is_a($this->__Handler,'Drapi\\Handler'));
 	}
 
 	public function testGetOutput()
 	{
-		$handlerObj = $this->__FakeMainHandler->get($this->__Request,$this->__Response);
+		$this->__Handler->setUpClassName('FakeHandlerClass');
+		$handlerObj = $this->__Handler->get($this->__Request,$this->__Response);
 		$this->assertTrue(!is_null($handlerObj));
 		$this->assertTrue(is_a($handlerObj,'Drapi\\Base\\Abstracts\\Handler'));
+	}
+
+	public function testManualSetUpObj()
+	{
+		
+		$this->__Handler->setUpClassName('FakeHandlerClass');
+		$this->__Handler->setUpClassObj($this->__Request,$this->__Response,'FakeHandlerClass');
+
+		$handlerObj = $this->__Handler->get($this->__Request,$this->__Response);
+		$this->assertTrue(!is_null($handlerObj));
+		$this->assertTrue(is_a($handlerObj,'Drapi\\Base\\Abstracts\\Handler'));
+	}
+
+	public function testActionHandler()
+	{
+		$this->__Handler = new DrapiHandler('FakeHandlerClass','test');
+		$this->__Handler->setUpClassName('FakeHandlerClass');
+		$this->__Handler->setUpClassObj($this->__Request,$this->__Response,'FakeHandlerClass');
+
+		$handlerObj = $this->__Handler->get($this->__Request,$this->__Response);		
+		$this->assertTrue(!is_null($handlerObj));
+		$this->assertInternalType('array',$handlerObj);
+		$this->assertArrayHasKey('key1',$handlerObj);
+		$this->assertEquals($handlerObj['key1'],'value1');
+	}
+
+	public function testNullHandlerObj()
+	{
+		$handlerObj = $this->__Handler->get($this->__Request,$this->__Response);		
+		$this->assertTrue(is_null($handlerObj));
 	}
 }
