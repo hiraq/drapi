@@ -7,6 +7,7 @@ A framework to create and manage API (REST) services
 [![Coverage Status](https://coveralls.io/repos/hiraq/drapi/badge.png)](https://coveralls.io/r/hiraq/drapi)
 [![Latest Stable Version](https://poser.pugx.org/hiraq/drapi/v/stable.png)](https://packagist.org/packages/hiraq/drapi)
 [![Total Downloads](https://poser.pugx.org/hiraq/drapi/downloads.png)](https://packagist.org/packages/hiraq/drapi)
+[![project status](http://stillmaintained.com/hiraq/drapi.png)](http://stillmaintained.com/hiraq/drapi.png)
 
 usage
 =====
