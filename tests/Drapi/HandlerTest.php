@@ -47,8 +47,7 @@ class HandlerTest extends PHPUnit_Framework_TestCase
 	}
 
 	public function testManualSetUpObj()
-	{
-		
+	{		
 		$this->__Handler->setUpClassName('FakeHandlerClass');
 		$this->__Handler->setUpClassObj($this->__Request,$this->__Response,'FakeHandlerClass');
 
