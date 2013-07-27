@@ -11,52 +11,49 @@ class Handler extends Object
 {
 	protected $name;
 	protected $action;
+	protected $request;
+	protected $response;
 	private $className;
-	private $classObj;	
+	private $classObj;		
 
-	public  function __construct($name,$action=null)
+	public function setHandlerName($name)
 	{
-		$this->name = ucfirst(strtolower($name));
+		$this->className = $name;
+	}
+
+	public function setHandlerAction($action)
+	{
 		$this->action = $action;
 	}
 
-	public function setUpClassName($name=null)
+	public function setRequest($request)
 	{
-		$this->className = is_null($name) ? 'Drapi\\Handler\\'.$this->name : $name;
+		$this->request = $request;
 	}
 
-	public function setUpClassObj($request,$response,$name=null)
+	public function setResponse($response)
 	{
-		if (is_null($name)) {
-			if (class_exists($this->className)) {
-				$this->classObj = new $this->className($request,$response);
-			}
-		} else {
-			if (class_exists($name)) {
-				$this->classObj = new $name($request,$response);
-			}
-		}		
+		$this->response = $response;
 	}
 
-	public function get(DrapiRequest $request, DrapiResponse $response)
+	public function getOutput()
 	{		
-		//setup class name
-		if (empty($this->className)) {
-			$this->setUpClassName('Drapi\\Handler\\'.ucfirst(strtolower($this->name)));
+		$handlerObj = null;
+		if (class_exists($this->className)) {
+			$handlerObj = new $this->className($this->request,$this->response);
 		}
 
-		//setup class obj
-		if (empty($this->classObj)) {			
-			$this->setUpClassObj($request,$response);	
-		}		
+		if (!is_null($handlerObj)) {
 
-		/*
-		check for action handler
-		 */
-		if (!empty($this->action) && !empty($this->classObj)) {
-			return $this->classObj->{$this->action}();
-		} else {
-			return $this->classObj;
+			if (!empty($this->action) && method_exists($handlerObj,$this->action)) {
+				return $handlerObj->{$this->action}();
+			} else {
+				return $handlerObj->getDefaultOutput();
+			}
+
 		}
+
+		return false;
+			
 	}
 }

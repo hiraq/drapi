@@ -17,5 +17,5 @@ abstract class Handler extends Object
 		$this->response = $response;
 	}
 
-	abstract public function getOutput();
+	abstract public function getDefaultOutput();
 }

@@ -6,7 +6,7 @@ use Drapi\Response as DrapiResponse;
 
 class FakeAbstractHandlerClass extends DrapiBaseHandler
 {
-	public function getOutput()
+	public function getDefaultOutput()
 	{
 		return array('test' => 'testing');
 	}
@@ -34,7 +34,7 @@ class AbstractHandlerTest extends PHPUnit_Framework_TestCase
 
 	public function testOutputHandler()
 	{
-		$output = $this->__FakeHandler->getOutput();
+		$output = $this->__FakeHandler->getDefaultOutput();
 		$this->assertInternalType('array',$output);
 		$this->assertArrayHasKey('test',$output);
 		$this->assertEquals($output['test'],'testing');

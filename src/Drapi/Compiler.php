@@ -51,12 +51,11 @@ class Compiler extends Object
 	 * @param Request  $request
 	 * @param Response $response
 	 */
-	public function __construct(Router $router, Request $request, Response $response,Handler $handler)
+	public function __construct(Router $router, Request $request, Response $response)
 	{
 		$this->router = $router;
 		$this->request = $request;
-		$this->response = $response;
-		$this->handler = $handler;
+		$this->response = $response;		
 	}
 
 	public function compile()
@@ -72,15 +71,14 @@ class Compiler extends Object
 
 		//check path to router
 		$this->checkRouter();
-	}
 
-	/**
-	 * Get handler manager
-	 * @return Handler
-	 */
-	public function getHandler()
+		//run handler class
+		$this->runHandler();
+	}	
+
+	public function setHandler($handler)
 	{
-		return $this->handler;
+		$this->handler = $handler;
 	}
 
 	/**
@@ -128,6 +126,21 @@ class Compiler extends Object
 		return $this->handlerAction;
 	}
 
+	private function runHandler()
+	{
+		if (!empty($this->handler)) {
+
+			$this->handler->setRequest($this->request);
+			$this->handler->setResponse($this->response);
+			$this->handler->setHandlerName($this->handlerName);
+			$this->handler->setHandlerAction($this->handlerAction);
+
+			$output = $this->handler->getOutput();
+			$this->response->send($output);
+
+		}
+	}
+
 	private function checkRouter()
 	{
 		/*
@@ -148,9 +161,16 @@ class Compiler extends Object
 	private function manualSetupHandler()
 	{
 		if (strstr($this->uriPath,'/')) {
+			
 			$exp = explode('/',$this->uriPath);
+			array_shift($exp);
+
 			$this->handlerName = ucfirst(strtolower(current($exp)));
-			$this->handlerAction = ucfirst(strtolower(end($exp)));
+
+			if (count($exp) > 1) {
+				$this->handlerAction = end($exp);
+			}
+			
 		}
 	}	
 }
