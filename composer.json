@@ -1,7 +1,7 @@
 {
     "name": "hiraq/drapi",
-    "description": "A framework to create API services",
-    "keywords": ["api"],
+    "description": "A framework to create and manage API services",
+    "keywords": ["api","json","rest"],
     "repositories": [
         {
             "type": "composer",

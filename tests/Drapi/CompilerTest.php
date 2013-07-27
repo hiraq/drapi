@@ -30,6 +30,19 @@ class Test extends DrapiBaseHandler
 	}
 }
 
+class PrefixTest extends DrapiBaseHandler
+{
+	public function getDefaultOutput()
+	{
+		return array('test' => 'testing');
+	}
+
+	public function testing()
+	{
+		return array('key1' => 'value1');
+	}
+}
+
 class CompilerTest extends PHPUnit_Framework_TestCase
 {
 	private $__Router;
@@ -97,6 +110,44 @@ class CompilerTest extends PHPUnit_Framework_TestCase
 		$this->mockingCompiler($this->__Router,$request,$response);
 
 		$this->__Compiler->setHandler($handler);
+		$this->__Compiler->compile();		
+
+		$handlerName = $this->__Compiler->getHandlerName();
+		$handlerAction = $this->__Compiler->getHandlerAction();
+
+		$this->expectOutputString(\Zend\Json\Json::encode(array('key1' => 'value1')));
+		$this->assertEquals('Test',$handlerName);
+		$this->assertEquals('testing',$handlerAction);		
+	}
+
+	public function testCompileWithPrefix()
+	{
+		$request = $this->getMockRequest();
+		$response = $this->getMockResponse();
+		$handler = new DrapiHandler;
+
+		$request->expects($this->once())
+				->method('listen')
+				->will($this->returnValue(null));
+
+		$request->expects($this->once())
+				->method('getUriPath')
+				->will($this->returnValue('/test/testing'));
+
+		$request->expects($this->once())
+				->method('getParams')
+				->will($this->returnValue(null));
+
+		$response->expects($this->once())
+				 ->method('send')
+				 ->will($this->returnCallback(function() {
+				 	echo \Zend\Json\Json::encode(array('key1' => 'value1'));
+				 }));
+
+		$this->mockingCompiler($this->__Router,$request,$response);
+
+		$this->__Compiler->setHandler($handler);
+		$this->__Compiler->setHandlerNameSpace('Prefix');
 		$this->__Compiler->compile();		
 
 		$handlerName = $this->__Compiler->getHandlerName();

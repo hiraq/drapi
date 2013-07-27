@@ -40,13 +40,15 @@ class Compiler extends Object
 
 	private $uriPath;	
 	private $uriParams;	
+	private $handlerNameSpace;
 	private $handlerName;
 	private $handlerAction;
 	private $action;	
 
 	/**
 	 * Setup router,request and response objects
-	 * 
+	 *
+	 * @access public
 	 * @param Router   $router
 	 * @param Request  $request
 	 * @param Response $response
@@ -58,6 +60,12 @@ class Compiler extends Object
 		$this->response = $response;		
 	}
 
+	/**
+	 * Compile process
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function compile()
 	{
 		//listen to current request
@@ -76,13 +84,32 @@ class Compiler extends Object
 		$this->runHandler();
 	}	
 
+	/**
+	 * Set main handler instance
+	 *
+	 * @access public
+	 * @param Handler $handler
+	 */
 	public function setHandler($handler)
 	{
 		$this->handler = $handler;
 	}
 
 	/**
+	 * Set handler namespace, default value is Drapi\Handler
+	 *
+	 * @access public
+	 * @param string $namespace
+	 */
+	public function setHandlerNameSpace($namespace='Drapi\\Handler')
+	{
+		$this->handlerNameSpace = $namespace;
+	}
+
+	/**
 	 * Get router manager
+	 *
+	 * @access public
 	 * @return Router
 	 */
 	public function getRouter()
@@ -92,6 +119,8 @@ class Compiler extends Object
 
 	/**
 	 * Get request manager
+	 *
+	 * @access public
 	 * @return Request
 	 */
 	public function getRequest()
@@ -101,6 +130,8 @@ class Compiler extends Object
 
 	/**
 	 * Get response manager
+	 *
+	 * @access public
 	 * @return Response
 	 */
 	public function getResponse()
@@ -119,6 +150,8 @@ class Compiler extends Object
 
 	/**
 	 * Get handler action
+	 *
+	 * @access public
 	 * @return string
 	 */
 	public function getHandlerAction()
@@ -126,21 +159,33 @@ class Compiler extends Object
 		return $this->handlerAction;
 	}
 
+	/**
+	 * Run handler
+	 *
+	 * @access private
+	 * @return void
+	 */
 	private function runHandler()
-	{
+	{		
 		if (!empty($this->handler)) {
 
 			$this->handler->setRequest($this->request);
 			$this->handler->setResponse($this->response);
-			$this->handler->setHandlerName($this->handlerName);
+			$this->handler->setHandlerName($this->handlerNameSpace.$this->handlerName);
 			$this->handler->setHandlerAction($this->handlerAction);
 
-			$output = $this->handler->getOutput();
+			$output = $this->handler->getOutput();			
 			$this->response->send($output);
 
 		}
 	}
 
+	/**
+	 * Check router for requested uri path
+	 *
+	 * @access private
+	 * @return void
+	 */
 	private function checkRouter()
 	{
 		/*
@@ -158,6 +203,12 @@ class Compiler extends Object
 		}
 	}
 
+	/**
+	 * Manual setup handler if not found in router
+	 *
+	 * @access private
+	 * @return void
+	 */
 	private function manualSetupHandler()
 	{
 		if (strstr($this->uriPath,'/')) {

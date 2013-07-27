@@ -38,6 +38,9 @@
     <filter>
         <whitelist>
             <directory suffix=".php">src/Drapi/</directory>
+            <exclude>
+                <directory suffix=".php">src/Drapi/Handler</directory>
+            </exclude>
         </whitelist>
     </filter>
 </phpunit>
