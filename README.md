@@ -3,9 +3,6 @@ drapi
 
 A framework to create and manage API (REST) services
 
-development status
-==================
-
 [![Build Status](https://travis-ci.org/hiraq/drapi.png?branch=dev)](https://travis-ci.org/hiraq/drapi)
 [![Coverage Status](https://coveralls.io/repos/hiraq/drapi/badge.png)](https://coveralls.io/r/hiraq/drapi)
 [![Latest Stable Version](https://poser.pugx.org/hiraq/drapi/v/stable.png)](https://packagist.org/packages/hiraq/drapi)
